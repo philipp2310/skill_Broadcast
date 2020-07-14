@@ -13,7 +13,6 @@ class Broadcast(AliceSkill):
 	"""
 
 
-	# todo get the timer working on delayed message
 	# todo Make the code Psycho friendly
 	# todo Account for multiple delayed messages ?
 
