@@ -363,6 +363,7 @@ class Broadcast(AliceSkill):
 		self._saidYes: bool = False
 
 
+	# the delayed sound file to play
 	def delayedSoundPlaying(self):
 		self.playSound(
 			soundFilename='delayedSound',
