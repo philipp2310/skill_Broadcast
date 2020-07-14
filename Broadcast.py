@@ -133,15 +133,9 @@ class Broadcast(AliceSkill):
 				self.playBroadcastMessage(session)
 			else:
 				delayedInterval: float = self.Commons.getDuration(session)
-
 				self.ThreadManager.doLater(
 					interval=delayedInterval,
-					func=self.playSound(
-						soundFilename='delayedSound',
-						location=self.getResource('Sounds'),
-						sessionId='DelayedBroadcastAlert',
-						siteId=self._playbackDevice
-					)
+					func=self.delayedSoundPlaying
 				)
 				self.endDialog(
 					sessionId=session.sessionId,
@@ -367,3 +361,12 @@ class Broadcast(AliceSkill):
 		self._sendingDevice: str = ''
 		self._replying: bool = False
 		self._saidYes: bool = False
+
+
+	def delayedSoundPlaying(self):
+		self.playSound(
+			soundFilename='delayedSound',
+			location=self.getResource('Sounds'),
+			sessionId='DelayedBroadcastAlert',
+			siteId=self._playbackDevice
+		)

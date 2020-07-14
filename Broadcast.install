@@ -1,8 +1,8 @@
 {
     "name": "Broadcast",
-    "version": "0.0.1",
-    "icon": "fab fa-battle-net",
-    "category": "undefined",
+    "version": "1.0.0",
+    "icon": "far fa-comments",
+    "category": "entertainment",
     "author": "Lazza",
     "maintainers": [],
     "desc": "Broadcast voice message to satellites",

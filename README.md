@@ -32,7 +32,7 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
 2. AllowReplies - Enabling this (default setting) allows Alice to expect replies to a initial broadcast so you can have back and forth 
                     conversatios with someone via broadcasting, disabling will send the initial broadcast and then
                      end the session.
-3. OnlineSatsOnly - Enable this (not enabeled by default) if you have the latest satellite branch and satellite widget installed
+3. OnlineSatsOnly - Enable this (not enabled by default) if you have the latest satellite branch and satellite widget installed
                     which uses heartbeats to detect if satellite is currently online or not
                     - disable this if you are on alpha a1 or earlier version of the satellite branch which
                      does not use the heartbeat code
