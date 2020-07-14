@@ -1,0 +1,20 @@
+{
+	"UseVoiceRecording": {
+		"defaultValue": true,
+		"dataType": "boolean",
+		"isSensitive": false,
+		"description": "Allows User to allow the use of their own voice recording"
+	},
+	"AllowReplies": {
+		"defaultValue": true,
+		"dataType": "boolean",
+		"isSensitive": false,
+		"description": "Lets alice know you want to allow broadcast replies"
+	},
+	"OnlineSatsOnly": {
+		"defaultValue": true,
+		"dataType": "boolean",
+		"isSensitive": false,
+		"description": "Allow users on alpha sat branches to play to sats"
+	}
+}

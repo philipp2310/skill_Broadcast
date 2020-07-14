@@ -1,0 +1,87 @@
+{
+	"playbackRequest": {
+		"default": [
+			"Will you be wanting this broadcast to play back to you now ?",
+			"Do you want this broadcast played back to you now ?",
+			"Do you want to hear the message played back now ?"
+		],
+		"short": [
+			"Shall I play this back now ?"
+		]
+	},
+	"playbackTime": {
+		"default": [
+			"What time would you like it played back for then ?",
+			"When do you want the message to be re played for",
+			"When do you want me to play this back ?"
+		],
+		"short": [
+			"Pick a time for playback",
+			"Play this back at what time ?"
+		]
+	},
+	"durationConfirmation": {
+		"default": [
+			"No problem. All sorted",
+			"Consider it done",
+			"All sorted. Will play that back later"
+		],
+		"short": [
+			"Sorted",
+			"Done"
+		]
+	},
+	"noConfirmationHeard": {
+		"default": [
+			"Sorry i didn't hear a duration, please try again",
+			"I didn't hear a duration. Please set a duration for playback now"
+		],
+		"short": [
+			"For what duration ?",
+			"Set a duration"
+		]
+	},
+	"chooseARoom": {
+		"default": [
+			"Please choose a room with a Active satellite in it",
+			"What location do you want this to broadcast to ?"
+		],
+		"short": [
+			"Pick a location",
+			"What room ?"
+		]
+	},
+	"addAMessage": {
+		"default": [
+			"Please add a message to broadcast.",
+			"What message do you want to broadcast ?",
+			"Say the message you want to broadcast now"
+		],
+		"short": [
+			"Whats the message!",
+			"Add a message"
+		]
+	},
+	"replyRequest": {
+		"default": [
+			"waiting for a reply",
+			"I'm listening for a reply",
+			"reply now"
+		],
+		"short": [
+			"I'm listening for a reply",
+			"reply or say cancel"
+		]
+	},
+	"chooseAnotherLocation": {
+		"default": [
+			"That location doesn't appear to exist. Please try again",
+			"Can't find that location please try again",
+			"Nothing active in that location, Please select another room"
+		],
+		"short": [
+			"try again",
+			"Please pick a active room"
+		]
+	}
+}
