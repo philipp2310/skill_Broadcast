@@ -1,0 +1,123 @@
+{
+    "skill": "Broadcast",
+    "icon": "time",
+    "description": "Broadcast voice message to satellites",
+    "slotTypes": [
+        {
+            "name": "Broadcast",
+            "matchingStrictness": null,
+			"automaticallyExtensible": true,
+			"useSynonyms": true,
+			"values": [
+				{
+					"value": "broadcast",
+					"synonyms": [
+						"Broadcast",
+						"Nachricht",
+						"broadcaste"
+					]
+				}
+			]
+		},
+		{
+			"name": "GetBase",
+			"matchingStrictness": null,
+			"automaticallyExtensible": true,
+			"useSynonyms": true,
+			"values": [
+				{
+					"value": "default",
+					"synonyms": [
+						"base",
+						"main",
+						"basis",
+						"haupteinheit"
+					]
+				}
+			]
+		}
+	],
+    "intents": [
+        {
+        	"name": "AddBroadcast",
+        	"description": "User requests to broadcast a message",
+        	"enabledByDefault": true,
+        	"utterances": [
+				"Sende einen {broadcast:=>Broadcast}",
+				"Schicke eine {broadcast:=>Broadcast}",
+				"Sende einen {broadcast:=>Broadcast} bitte",
+				"{broadcast:=>Broadcast} ",
+				"{broadcast:=>Broadcast} zur {kitchen:=>Location} ",
+				"{broadcast:=>Broadcast} ins {bedroom:=>Location}",
+				"{broadcast:=>Broadcast} nach {outside:=>Location}"
+			],
+        	"slots": [
+        		{
+        			"name": "Broadcast",
+        			"description": null,
+        			"required": false,
+        			"type": "Broadcast",
+        			"missingQuestion": ""
+        		},
+				{
+					"name": "Location",
+					"description": null,
+					"required": false,
+					"type": "Alice/Location",
+					"missingQuestion": ""
+				}
+        	]
+        },
+		{
+			"name": "BroadcastTime",
+			"description": "add a Time for play back",
+			"enabledByDefault": false,
+			"utterances": [
+				"{in 1 hour:=>Duration}",
+				"{in 10 minutes:=>Duration}",
+				"{in 3 hours:=>Duration}",
+				"{in 1 minute:=>Duration}"
+			],
+			"slots": [
+				{
+					"name": "Duration",
+					"description": null,
+					"required": false,
+					"type": "snips/duration",
+					"missingQuestion": ""
+				}
+			]
+		},
+		{
+			"name": "BroadcastRoom",
+			"description": "For users who have more than one satellite",
+			"enabledByDefault": false,
+			"utterances": [
+				"Die {kitchen:=>Location} bitte",
+				"{garage:=>Location}",
+				"In dem {bathroom:=>Location}",
+				"In die {bedroom:=>Location}",
+				"{caravan:=>Location}",
+				"die {main:=>GetBase}",
+				"{default:=>GetBase}",
+				"{base:=>GetBase} gerät"
+			],
+			"slots": [
+				{
+					"name": "Location",
+					"description": null,
+					"required": false,
+					"type": "Alice/Location",
+					"missingQuestion": ""
+				},
+				{
+					"name": "GetBase",
+					"description": null,
+					"required": false,
+					"type": "GetBase",
+					"missingQuestion": ""
+				}
+			]
+		}
+	]
+}
