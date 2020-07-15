@@ -2,18 +2,17 @@ from core.base.model.AliceSkill import AliceSkill
 from core.dialog.model.DialogSession import DialogSession
 from core.util.Decorators import IntentHandler
 from pathlib import Path
-import shutil
+import subprocess
 
 
 class Broadcast(AliceSkill):
 	"""
 	Author: Lazza
 	Description: Broadcast voice or normal messages to active satellites
-
+		NOTE: Subprocess is used only to copy and delete a sound file when delaying a message
 	"""
 
 
-	# todo Make the code Psycho friendly
 	# todo Account for multiple delayed messages ?
 
 
@@ -76,13 +75,23 @@ class Broadcast(AliceSkill):
 
 		else:
 			self._saidYes = False
-			self.continueDialog(
-				sessionId=session.sessionId,
-				text=self.randomTalk('playbackTime'),
-				intentFilter=['BroadcastTime'],
-				currentDialogState='UserWantsToDelayBroadcast',
-				probabilityThreshold=0.1
-			)
+
+			soundfilePath = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
+			if soundfilePath.exists():
+				self.endDialog(
+					sessionId=session.sessionId,
+					text=self.randomTalk('delayError'),
+					siteId=session.siteId
+				)
+
+			else:
+				self.continueDialog(
+					sessionId=session.sessionId,
+					text=self.randomTalk('playbackTime'),
+					intentFilter=['BroadcastTime'],
+					currentDialogState='UserWantsToDelayBroadcast',
+					probabilityThreshold=0.1
+				)
 
 
 	# If the user has requested to delay the responce (main unit systems only) then do this
@@ -110,11 +119,6 @@ class Broadcast(AliceSkill):
 			)
 
 
-	# todo - use this to allow future saving of delayedReplies maybe ?
-	def updateBroadcastConfig(self):
-		self.updateConfig(key='DelayedCount', value=1)
-
-
 	# Add the broadcast message now that choosing location has been satisfied, and playback to the device
 	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage', isProtected=True)
 	def ProcessFirstInputMessage(self, session: DialogSession):
@@ -123,10 +127,11 @@ class Broadcast(AliceSkill):
 		if self.satelliteQuantity == 0:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
 			# Copy lastUserSpeech.wav to the sounds folder
+			dst4file = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
+
 			if delayedRecording:
-				file2Copy: str = str(delayedRecording)
-				dst4file: str = str(self.getResource('Sounds'))
-				shutil.copyfile(file2Copy, f'{dst4file}/delayedSound.wav')
+				subprocess.run(['sudo', 'cp', str(delayedRecording), str(dst4file)])
+
 			# if user wants to playback now (no satellite senario)
 			if self._saidYes:
 				self.playBroadcastMessage(session)
@@ -136,6 +141,7 @@ class Broadcast(AliceSkill):
 					interval=delayedInterval,
 					func=self.delayedSoundPlaying
 				)
+
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self.randomTalk('durationConfirmation')
@@ -265,8 +271,9 @@ class Broadcast(AliceSkill):
 			tempListOfRooms = self.LocationManager.getLocation(locId=device.locationID)
 
 			self._listOfSatelliteRooms.append(tempListOfRooms.name)
-		# todo larry remove this test line (used to pretend i have one sat not two)
+		# todo larry remove these two test lines (used to pretend i have one sat not two... or zero sats)
 		# self._listOfSatelliteRooms = ['Caravan']
+		# self._listOfSatelliteRooms = []
 
 		self._preChecks = True
 
@@ -370,3 +377,5 @@ class Broadcast(AliceSkill):
 			sessionId='DelayedBroadcastAlert',
 			siteId=self._playbackDevice
 		)
+		soundfilePath = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
+		subprocess.run(['sudo', 'rm', soundfilePath])

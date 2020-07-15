@@ -83,5 +83,13 @@
 			"try again",
 			"Please pick a active room"
 		]
+	},
+	"delayError": {
+		"default": [
+			"Sorry but there is already one message waiting, and i don't have the ability to store more just yet"
+		],
+		"short": [
+			"Can't remember more than one message just yet sorry"
+		]
 	}
 }
