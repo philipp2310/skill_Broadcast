@@ -1,8 +1,9 @@
+import subprocess
+from pathlib import Path
+
 from core.base.model.AliceSkill import AliceSkill
 from core.dialog.model.DialogSession import DialogSession
 from core.util.Decorators import IntentHandler
-from pathlib import Path
-import subprocess
 
 
 class Broadcast(AliceSkill):
@@ -11,9 +12,6 @@ class Broadcast(AliceSkill):
 	Description: Broadcast voice or normal messages to active satellites
 		NOTE: Subprocess is used only to copy and delete a sound file when delaying a message
 	"""
-
-
-	# todo Account for multiple delayed messages ?
 
 
 	def __init__(self):
@@ -56,7 +54,7 @@ class Broadcast(AliceSkill):
 
 		# is the user choosing the Alice base unit to talk to ?
 		if 'GetBase' in session.slots:
-			self._playbackDevice: str = self.getAliceConfig('deviceName')
+			self._playbackDevice = self.getAliceConfig('deviceName')
 			self._selectedSat = self._playbackDevice
 			self.doStatusCheck(session)
 
@@ -122,7 +120,7 @@ class Broadcast(AliceSkill):
 	# Add the broadcast message now that choosing location has been satisfied, and playback to the device
 	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage', isProtected=True)
 	def ProcessFirstInputMessage(self, session: DialogSession):
-		self._broadcastMessage: str = session.payload['input']
+		self._broadcastMessage = session.payload['input']
 
 		if self.satelliteQuantity == 0:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
@@ -178,12 +176,12 @@ class Broadcast(AliceSkill):
 			for case in listOfCaseOptions:
 				tempLocationCase = eval(case)
 				if tempLocationCase in self._listOfSatelliteRooms:
-					self._playbackDevice: str = tempLocationCase
+					self._playbackDevice = tempLocationCase
 					self._selectedSat = self._playbackDevice
 					return
 
 			if spokenLocation == self.getAliceConfig('deviceName'):
-				self._playbackDevice: str = spokenLocation
+				self._playbackDevice = spokenLocation
 				self._selectedSat = self._playbackDevice
 				return
 
@@ -224,13 +222,13 @@ class Broadcast(AliceSkill):
 		# If request is coming from the base unit then do this
 		if self.satelliteQuantity == 0:
 			# set playback device to the base unit
-			self._playbackDevice: str = session.siteId
-			self._selectedSat: str = self._playbackDevice
+			self._playbackDevice = session.siteId
+			self._selectedSat = self._playbackDevice
 
 		elif self.satelliteQuantity == 1:
 			# set playback to the only satellite the user has
 			self._playbackDevice = self._listOfSatelliteRooms[0]
-			self._selectedSat: str = self._playbackDevice
+			self._selectedSat = self._playbackDevice
 
 		elif self.satelliteQuantity >= 2:
 			# Ask user which satellite to use in multi sat senario
@@ -271,7 +269,7 @@ class Broadcast(AliceSkill):
 			tempListOfRooms = self.LocationManager.getLocation(locId=device.locationID)
 
 			self._listOfSatelliteRooms.append(tempListOfRooms.name)
-		# todo larry remove these two test lines (used to pretend i have one sat not two... or zero sats)
+		### test lines ###
 		# self._listOfSatelliteRooms = ['Caravan']
 		# self._listOfSatelliteRooms = []
 
