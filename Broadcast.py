@@ -210,14 +210,13 @@ class Broadcast(AliceSkill):
 		if self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity == 1:
 			self._playbackDevice = self.getAliceConfig('deviceName')
 			self._selectedSat = self._playbackDevice
-			return
+
 		# else if there are multiple sats and the request is coming from one of them do this
 		elif self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity >= 2:
 			self.chooseLocation(session)
-			return
 
 		# If request is coming from the base unit then do this
-		if self._satelliteQuantity == 0:
+		elif self._satelliteQuantity == 0:
 			# set playback device to the base unit
 			self._playbackDevice = session.siteId
 			self._selectedSat = self._playbackDevice
