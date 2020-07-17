@@ -1,10 +1,12 @@
 {
     "name": "Broadcast",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "icon": "far fa-comments",
     "category": "entertainment",
     "author": "Lazza",
-    "maintainers": [],
+    "maintainers": [
+        "Psycho"
+    ],
     "desc": "Broadcast voice message to satellites",
     "aliceMinVersion": "1.0.0-b1",
     "systemRequirements": [
