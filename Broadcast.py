@@ -1,8 +1,8 @@
+from pathlib import Path
+
 from core.base.model.AliceSkill import AliceSkill
 from core.dialog.model.DialogSession import DialogSession
 from core.util.Decorators import IntentHandler
-from pathlib import Path
-import subprocess
 
 
 class Broadcast(AliceSkill):
@@ -25,8 +25,9 @@ class Broadcast(AliceSkill):
 		self._listOfSatelliteRooms = list()
 		self._sendingDevice: str = ''
 		self._replying: bool = False
-		self._userSpeech = 'var/cache/lastUserpeech_{}_{}.wav'
+		self._userSpeech = self.AudioServer.LAST_USER_SPEECH
 		self._saidYes: bool = False
+		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
 
 		super().__init__()
 
@@ -76,8 +77,7 @@ class Broadcast(AliceSkill):
 		else:
 			self._saidYes = False
 
-			soundfilePath = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
-			if soundfilePath.exists():
+			if self._waveFile.exists():
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self.randomTalk('delayError'),
@@ -127,10 +127,9 @@ class Broadcast(AliceSkill):
 		if self.satelliteQuantity == 0:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
 			# Copy lastUserSpeech.wav to the sounds folder
-			dst4file = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
 
 			if delayedRecording:
-				subprocess.run(['sudo', 'cp', str(delayedRecording), str(dst4file)])
+				self.Commons.runSystemCommand(['cp', str(delayedRecording), str(self._waveFile)])
 
 			# if user wants to playback now (no satellite senario)
 			if self._saidYes:
@@ -354,7 +353,7 @@ class Broadcast(AliceSkill):
 	def playBroadcastSound(self):
 		self.playSound(
 			soundFilename='broadcastNotification',
-			location=self.getResource('Sounds'),
+			location=self.getResource('sounds'),
 			sessionId='BroadcastAlert',
 			siteId=self._playbackDevice
 		)
@@ -373,9 +372,8 @@ class Broadcast(AliceSkill):
 	def delayedSoundPlaying(self):
 		self.playSound(
 			soundFilename='delayedSound',
-			location=self.getResource('Sounds'),
+			location=self.getResource('sounds'),
 			sessionId='DelayedBroadcastAlert',
 			siteId=self._playbackDevice
 		)
-		soundfilePath = Path(f'{self.getResource("Sounds")}/delayedSound.wav')
-		subprocess.run(['sudo', 'rm', soundfilePath])
+		self.Commons.runSystemCommand(['rm', str(self._waveFile)])
