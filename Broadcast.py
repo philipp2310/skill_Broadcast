@@ -9,7 +9,6 @@ class Broadcast(AliceSkill):
 	"""
 	Author: Lazza
 	Description: Broadcast voice or normal messages to active satellites
-		NOTE: Subprocess is used only to copy and delete a sound file when delaying a message
 	"""
 
 
