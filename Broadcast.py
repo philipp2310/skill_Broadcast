@@ -14,8 +14,9 @@ class Broadcast(AliceSkill):
 
 
 	def __init__(self):
+		super().__init__()
 		self._preChecks: bool = False
-		self.satelliteQuantity: int = 0
+		self._satelliteQuantity: int = 0
 		self._broadcastMessage: str = ''
 		self._playbackDevice: str = ''
 		self._selectedSat = None
@@ -26,8 +27,6 @@ class Broadcast(AliceSkill):
 		self._saidYes: bool = False
 		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
 
-		super().__init__()
-
 
 	# NOTE: _selectedSat is same as playbackdevice but is used to allow reference to who i'm having a conversation with
 
@@ -35,8 +34,8 @@ class Broadcast(AliceSkill):
 
 	@IntentHandler('AddBroadcast')
 	def addNewBroadcast(self, session: DialogSession, **_kwargs):
-		# If UseVoiceRecording is enabled then turn on Alice's voice recording feature
-		if self.getConfig('UseVoiceRecording') and not self.getAliceConfig('recordAudioAfterWakeword'):
+		# If useVoiceRecording is enabled then turn on Alice's voice recording feature
+		if self.getConfig('useVoiceRecording') and not self.getAliceConfig('recordAudioAfterWakeword'):
 			self.updateAliceConfig(key='recordAudioAfterWakeword', value=True)
 			self.logWarning(f'BroadCast skill has just enabled Alice\'s built in Record Audio After Wakeword feature')
 
@@ -121,7 +120,7 @@ class Broadcast(AliceSkill):
 	def ProcessFirstInputMessage(self, session: DialogSession):
 		self._broadcastMessage = session.payload['input']
 
-		if self.satelliteQuantity == 0:
+		if self._satelliteQuantity == 0:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
 			# Copy lastUserSpeech.wav to the sounds folder
 
@@ -144,7 +143,7 @@ class Broadcast(AliceSkill):
 				)
 
 		# if user has at least one active satellite then do this
-		elif self.satelliteQuantity >= 1 and self._broadcastMessage and self._playbackDevice:
+		elif self._satelliteQuantity >= 1 and self._broadcastMessage and self._playbackDevice:
 			self.playBroadcastMessage(session)
 
 
@@ -208,27 +207,26 @@ class Broadcast(AliceSkill):
 		self._sendingDevice = session.siteId
 
 		# if request is coming from the only available sat then do this
-		if self._sendingDevice in self._listOfSatelliteRooms and self.satelliteQuantity == 1:
+		if self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity == 1:
 			self._playbackDevice = self.getAliceConfig('deviceName')
 			self._selectedSat = self._playbackDevice
-			return
+
 		# else if there are multiple sats and the request is coming from one of them do this
-		elif self._sendingDevice in self._listOfSatelliteRooms and self.satelliteQuantity >= 2:
+		elif self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity >= 2:
 			self.chooseLocation(session)
-			return
 
 		# If request is coming from the base unit then do this
-		if self.satelliteQuantity == 0:
+		elif self._satelliteQuantity == 0:
 			# set playback device to the base unit
 			self._playbackDevice = session.siteId
 			self._selectedSat = self._playbackDevice
 
-		elif self.satelliteQuantity == 1:
+		elif self._satelliteQuantity == 1:
 			# set playback to the only satellite the user has
 			self._playbackDevice = self._listOfSatelliteRooms[0]
 			self._selectedSat = self._playbackDevice
 
-		elif self.satelliteQuantity >= 2:
+		elif self._satelliteQuantity >= 2:
 			# Ask user which satellite to use in multi sat senario
 			self.chooseLocation(session)
 
@@ -240,9 +238,9 @@ class Broadcast(AliceSkill):
 		if not self._selectedSat:
 			self.setTheActiveDevices(session)
 
-		if self._selectedSat and 'UserRandomAnswer' not in session.slots and self.satelliteQuantity >= 1:
+		if self._selectedSat and 'UserRandomAnswer' not in session.slots and self._satelliteQuantity >= 1:
 			self.requestMessage(session)
-		elif self._selectedSat and 'UserRandomAnswer' not in session.slots and self.satelliteQuantity == 0:
+		elif self._selectedSat and 'UserRandomAnswer' not in session.slots and self._satelliteQuantity == 0:
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('playbackRequest'),
@@ -256,14 +254,9 @@ class Broadcast(AliceSkill):
 		self._listOfSatelliteRooms = list()
 
 		# allow users with alpha branches and/or no heartbeat to play to sats
-		if self.getConfig('OnlineSatsOnly'):
-			connectedOnly: bool = True
-
-		else:
-			connectedOnly: bool = False
 
 		# Get list of satellites
-		for device in self.DeviceManager.getDevicesByType('AliceSatellite', connectedOnly=connectedOnly):
+		for device in self.DeviceManager.getDevicesByType('AliceSatellite', connectedOnly=self.getConfig('onlineSatsOnly')):
 			tempListOfRooms = self.LocationManager.getLocation(locId=device.locationID)
 
 			self._listOfSatelliteRooms.append(tempListOfRooms.name)
@@ -275,10 +268,10 @@ class Broadcast(AliceSkill):
 
 		if self._listOfSatelliteRooms:
 			self.logDebug(f'Your list of current locations with satellites are : {self._listOfSatelliteRooms}')
-			self.satelliteQuantity = len(self._listOfSatelliteRooms)
+			self._satelliteQuantity = len(self._listOfSatelliteRooms)
 		else:
 			self.logDebug(f'Seems you have no available satellites at the moment')
-			self.satelliteQuantity = 0
+			self._satelliteQuantity = 0
 
 
 	def delayReplyRequest(self):
@@ -307,24 +300,24 @@ class Broadcast(AliceSkill):
 	def playBroadcastMessage(self, session: DialogSession):
 		self.playBroadcastSound()
 		# if user has selected to play voice message broadcasts then do this
-		if self.getConfig('UseVoiceRecording'):
+		if self.getConfig('useVoiceRecording'):
 			lastRecording = Path(self._userSpeech.format(session.user, session.siteId))
 			self.playSound(lastRecording.stem, location=lastRecording.parent, siteId=self._playbackDevice)
 			self.endSession(sessionId=session.sessionId)
 
-			if self.satelliteQuantity == 0:
+			if self._satelliteQuantity == 0:
 				return
 
 			# If user also has choosen to allow replies then do this
-			if self.getConfig('AllowReplies') and self.satelliteQuantity >= 1:
+			if self.getConfig('allowReplies') and self._satelliteQuantity >= 1:
 				self.ThreadManager.doLater(
 					interval=5.0,
 					func=self.delayReplyRequest
 				)
 
-		elif not self.getConfig('UseVoiceRecording'):
+		elif not self.getConfig('useVoiceRecording'):
 
-			if self.getConfig('AllowReplies') and self.satelliteQuantity >= 1:
+			if self.getConfig('allowReplies') and self._satelliteQuantity >= 1:
 
 				self.endDialog(
 					sessionId=session.sessionId,

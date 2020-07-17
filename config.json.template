@@ -1,17 +1,17 @@
 {
-	"UseVoiceRecording": {
+	"useVoiceRecording": {
 		"defaultValue": true,
 		"dataType": "boolean",
 		"isSensitive": false,
-		"description": "Allows User to allow the use of their own voice recording"
+		"description": "Allows user to allow the use of their own voice recording"
 	},
-	"AllowReplies": {
+	"allowReplies": {
 		"defaultValue": true,
 		"dataType": "boolean",
 		"isSensitive": false,
 		"description": "Lets alice know you want to allow broadcast replies"
 	},
-	"OnlineSatsOnly": {
+	"onlineSatsOnly": {
 		"defaultValue": true,
 		"dataType": "boolean",
 		"isSensitive": false,
