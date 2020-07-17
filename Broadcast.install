@@ -9,12 +9,8 @@
     ],
     "desc": "Broadcast voice message to satellites",
     "aliceMinVersion": "1.0.0-b1",
-    "systemRequirements": [
-        ""
-    ],
-    "pipRequirements": [
-        ""
-    ],
+    "systemRequirements": [],
+    "pipRequirements": [],
     "conditions": {
         "lang": [
             "en",
