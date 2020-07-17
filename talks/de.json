@@ -1,0 +1,92 @@
+{
+	"playbackRequest": {
+		"default": [
+			"Soll ich es dir jetzt nochmal wiedergeben?",
+			"Soll ich es nochmal abspielen?",
+			"Willst du die Nachricht jetzt hören??"
+		],
+		"short": [
+			"Soll ich sie abspielen?"
+		]
+	},
+	"playbackTime": {
+		"default": [
+			"Wann soll die Nachricht wiedergegeben werden?",
+			"Um wieviel Uhr soll die Nachricht abgespielt werden?",
+			"Wann soll ich es abspielen?"
+		],
+		"short": [
+			"Wähle eine Wiedergabezeit",
+			"Wann soll ich es abspielen?"
+		]
+	},
+	"durationConfirmation": {
+		"default": [
+			"Ok, wird gemacht.",
+			"Sogut wie erledigt!",
+			"Ok, das merk ich mir."
+		],
+		"short": [
+			"Ok."
+		]
+	},
+	"noConfirmationHeard": {
+		"default": [
+			"Entschuldigung, bitte wiederhole die Uhrzeit.",
+			"Ich habe keine Zeit verstanden, bitte wiederhole sie."
+		],
+		"short": [
+			"Für wann?"
+		]
+	},
+	"chooseARoom": {
+		"default": [
+			"In welchem Raum soll die Wiedergabe erfolgen?",
+			"Wo soll ich die Nachricht abspielen?"
+		],
+		"short": [
+			"Wähle einen Ort",
+			"Welcher Raum?"
+		]
+	},
+	"addAMessage": {
+		"default": [
+			"Welche Nachricht soll ich wiedergeben?",
+			"Wie lautet deine Nachricht?",
+			"Wie ist deine Botschaft?"
+		],
+		"short": [
+			"Wie ist die Nachricht?",
+			"Nachricht?"
+		]
+	},
+	"replyRequest": {
+		"default": [
+			"Warte auf eine Antwort",
+			"Ich kann eine Antwort für dich übermitteln",
+			"Antworten oder abbrechen?"
+		],
+		"short": [
+			"Antworte jetzt"
+		]
+	},
+	"chooseAnotherLocation": {
+		"default": [
+			"Den Ort kenne ich leider nicht. Was meinst du?",
+			"Ich kann keine Nachricht an diesen Ort schicken!",
+			"Dort habe ich kein Gerät, bitte wähle einen anderen Ort!"
+		],
+		"short": [
+			"Wähle eine anderen Raum.",
+			"Kein Gerät gefunden."
+		]
+	},
+	"delayError": {
+		"default": [
+			"Entschuldigung, ich habe bereits eine Nachricht gespeichert - mehr kann ich mir noch nicht merken."
+		],
+		"short": [
+			"Sorry, ich habe schon eine Nachricht."
+		]
+	}
+}
