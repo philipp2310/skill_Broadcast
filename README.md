@@ -5,10 +5,11 @@
 Broadcast voice message to satellites
 
 - Author: Lazza
-- Maintainers: 
+- Maintainers: Psycho
 - Alice minimum Version: 1.0.0-b1
 - Languages:
     en
+    de
     
 **Broadcast Skill - General description**
 
