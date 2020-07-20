@@ -91,5 +91,37 @@
 		"short": [
 			"Can't remember more than one message just yet sorry"
 		]
+	},
+	"replySelf": {
+		"default": [
+			"Nope, No, no way. I'm not going to let you reply to yourself, That's a sign of insantiy",
+			"You're actually speaking on the last known broadcast device",
+			"You're on the previous broadcast device. Try asking me again in another room"
+		],
+		"short": [
+			"This is the previous broadcast device",
+			"Nope, can't do that"
+		]
+	},
+	"message4previous": {
+		"default": [
+			"ok, What message should i send to {0} device",
+			"no worries. What's the broadcast message i should send to the {0} device"
+		],
+		"short": [
+			"what message",
+			"what's the broadcast"
+		]
+	},
+	"previousMessageError": {
+		"default": [
+			"Seems to me you don't have a previously broadcasted message",
+			"Sorry but i can't find any recent broadcasts to reply to",
+			"Can't do that sorry. Try saying, send a broadcast instead"
+		],
+		"short": [
+			"Sorry, can't do that",
+			"Try saying, send a broadcast"
+		]
 	}
 }

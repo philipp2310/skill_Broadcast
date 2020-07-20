@@ -3,9 +3,9 @@
     "icon": "time",
     "description": "Broadcast voice message to satellites",
     "slotTypes": [
-        {
-            "name": "Broadcast",
-            "matchingStrictness": null,
+		{
+			"name": "Broadcast",
+			"matchingStrictness": null,
 			"automaticallyExtensible": true,
 			"useSynonyms": true,
 			"values": [
@@ -13,6 +13,21 @@
 					"value": "broadcast",
 					"synonyms": [
 						"Broadcast"
+					]
+				}
+			]
+		},
+		{
+			"name": "replyLastBroadcast",
+			"matchingStrictness": null,
+			"automaticallyExtensible": true,
+			"useSynonyms": true,
+			"values": [
+				{
+					"value": "reply",
+					"synonyms": [
+						"last",
+						"previous"
 					]
 				}
 			]
@@ -112,6 +127,28 @@
 					"description": null,
 					"required": false,
 					"type": "GetBase",
+					"missingQuestion": ""
+				}
+			]
+		},
+		{
+			"name": "BroadcastReply",
+			"description": "Reply to the last broadcast",
+			"enabledByDefault": true,
+			"utterances": [
+				"{reply:=>lastBroadcast} to the {last:=>lastBroadcast} broadcast",
+				"{reply:=>lastBroadcast} to the {previous:=>lastBroadcast} broadcast",
+				"{reply:=>lastBroadcast} to broadcast",
+				"{reply:=>lastBroadcast} to {last:=>lastBroadcast} broadcast",
+				"please {reply:=>lastBroadcast} to that broadcast",
+				"{reply:=>lastBroadcast} to the last message"
+			],
+			"slots": [
+				{
+					"name": "lastBroadcast",
+					"description": null,
+					"required": false,
+					"type": "replyLastBroadcast",
 					"missingQuestion": ""
 				}
 			]
