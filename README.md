@@ -5,10 +5,11 @@
 Broadcast voice message to satellites
 
 - Author: Lazza
-- Maintainers: 
+- Maintainers: Psycho
 - Alice minimum Version: 1.0.0-b1
 - Languages:
     en
+    de
     
 **Broadcast Skill - General description**
 
@@ -59,8 +60,18 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
     - You ..... "No"
     - Alice.... "When do you want to play that back then ?"
     - You  .... "In 3 hours"
-        
+    
+    *(Reply to a previous message)*
+    - Hey Snips/Alice"
+    - "Reply to the last messsage" (reply to last broadcast, reply to previous broadcast, etc.) 
+    - Alice... "Ok, What message should i send to **DeviceNameWillBeHere**?"
+    - You..... "I'll be there in five minutes "
+    
+    The message will then get sent to the last known device that initiated a broadcast
+    (NOTE: This feature works regardless of the state of "AllowReplies" being enabled or not) 
+    
+       
 - **Special NOTE**
 
 - Enabling UseVoiceRecordning option in settings will also automatically enable 
-    the voice recording on wakeword feature built into Alice (found in the admin Web UI)
+    the voice recording on wakeword feature built into Alice (found in the admin Web UI).
