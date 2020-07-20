@@ -33,7 +33,7 @@
 	},
 	"noConfirmationHeard": {
 		"default": [
-			"Sorry i didn't hear a duration, please try again",
+			"Sorry i didn't hear a duration, Please try again",
 			"I didn't hear a duration. Please set a duration for playback now"
 		],
 		"short": [
@@ -94,7 +94,7 @@
 	},
 	"replySelf": {
 		"default": [
-			"Nope, No, no way. I'm not going to let you reply to yourself, That's a sign of insantiy",
+			"Nope, No, no way. I'm not going to let you reply to yourself, That's a sign of insanity",
 			"You're actually speaking on the last known broadcast device",
 			"You're on the previous broadcast device. Try asking me again in another room"
 		],
@@ -105,12 +105,12 @@
 	},
 	"message4previous": {
 		"default": [
-			"ok, What message should i send to {0} device",
-			"no worries. What's the broadcast message i should send to the {0} device"
+			"Ok, What message should i send to the {0} device",
+			"No worries. What's the broadcast message i should send to the {0} device"
 		],
 		"short": [
-			"what message",
-			"what's the broadcast"
+			"What message?",
+			"What's the broadcast?"
 		]
 	},
 	"previousMessageError": {
