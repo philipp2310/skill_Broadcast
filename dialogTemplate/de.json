@@ -20,6 +20,22 @@
 			]
 		},
 		{
+			"name": "replyLastBroadcast",
+			"matchingStrictness": null,
+			"automaticallyExtensible": true,
+			"useSynonyms": true,
+			"values": [
+				{
+					"value": "reply",
+					"synonyms": [
+						"antwort",
+						"antworte",
+						"antworten"
+					]
+				}
+			]
+		},
+		{
 			"name": "GetBase",
 			"matchingStrictness": null,
 			"automaticallyExtensible": true,
@@ -115,6 +131,34 @@
 					"description": null,
 					"required": false,
 					"type": "GetBase",
+					"missingQuestion": ""
+				}
+			]
+		},
+		{
+			"name": "BroadcastReply",
+			"description": "Reply to the last broadcast",
+			"enabledByDefault": true,
+			"utterances": [
+				"{antworte:=>lastBroadcast} auf die letzte Nachricht",
+				"{antwort:=>lastBroadcast} zur letzten Nachricht",
+				"{antwort:=>lastBroadcast} zum letzten Broadcast",
+				"{antworte:=>lastBroadcast} auf den letzten Broadcast",
+				"schicke eine {antwort:=>lastBroadcast} zur letzten Nachricht",
+				"schicke eine {antwort:=>lastBroadcast} zum letzten Broadcast",
+				"schicke eine {antwort:=>lastBroadcast} dazu",
+				"schicke eine {antwort:=>lastBroadcast} darauf",
+				"ich möchte darauf {antworten:=>lastBroadcast}",
+				"ich möchte eine {antworte:=>lastBroadcast} verschicken",
+				"bitte verschicke eine {antwort:=>lastBroadcast} dazu",
+				"bitte sende eine {antwort:=>lastBroadcast} dazu"
+			],
+			"slots": [
+				{
+					"name": "lastBroadcast",
+					"description": null,
+					"required": false,
+					"type": "replyLastBroadcast",
 					"missingQuestion": ""
 				}
 			]
