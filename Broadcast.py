@@ -25,7 +25,7 @@ class Broadcast(AliceSkill):
 		self._userSpeech = self.AudioServer.LAST_USER_SPEECH
 		self._saidYes: bool = False
 		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
-
+		self._previousReplyDevice: str = ''
 
 	# NOTE: _selectedSat is same as playbackdevice but is used to allow reference to who i'm having a conversation with
 
@@ -45,6 +45,34 @@ class Broadcast(AliceSkill):
 		# Do prelimanary checks IE: Set the message and or the satellite room
 		self.doStatusCheck(session)
 
+	# used for replying to last known device that sent a broadcast
+	@IntentHandler('BroadcastReply')
+	def reply2LastBroadcast(self, session: DialogSession):
+		if self._previousReplyDevice == session.siteId:
+			self.endDialog(
+				sessionId=session.sessionId,
+				text=self.randomTalk(text='replySelf'),
+				siteId=session.siteId
+			)
+			return
+
+		if self._previousReplyDevice:
+			self._playbackDevice = self._previousReplyDevice
+			self._sendingDevice = session.siteId
+			self._selectedSat = self._playbackDevice
+			self.continueDialog(
+				sessionId=session.sessionId,
+				text=self.randomTalk(text='message4previous', replace=[self._previousReplyDevice]),
+				intentFilter=['UserRandomAnswer'],
+				currentDialogState='send2previous',
+				probabilityThreshold=0.1
+			)
+		if not self._previousReplyDevice:
+			self.endDialog(
+				sessionId=session.sessionId,
+				text=self.randomTalk('previousMessageError'),
+				siteId=session.siteId
+			)
 
 	# If user has choosen a room to play on in a multi satellite senario then do this
 	@IntentHandler(intent='BroadcastRoom', requiredState='askingWhatRoomToPlayOn', isProtected=True)
@@ -155,6 +183,13 @@ class Broadcast(AliceSkill):
 
 		self.playBroadcastMessage(session)
 
+
+	# Below runs when a reply has been asked by the user
+	@IntentHandler(intent='UserRandomAnswer', requiredState='send2previous', isProtected=True)
+	def ReplyToLastBroadcastDevice(self, session: DialogSession):
+		self._broadcastMessage = session.payload['input']
+
+		self.playBroadcastMessage(session)
 
 	######### THE CONFIGURATION GROUP ##############
 
@@ -297,6 +332,7 @@ class Broadcast(AliceSkill):
 
 	# Play the broadcast
 	def playBroadcastMessage(self, session: DialogSession):
+		self._previousReplyDevice = self._sendingDevice
 		self.playBroadcastSound()
 		# if user has selected to play voice message broadcasts then do this
 		if self.getConfig('useVoiceRecording'):
