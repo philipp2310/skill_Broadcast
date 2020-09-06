@@ -3,6 +3,7 @@ from pathlib import Path
 from core.base.model.AliceSkill import AliceSkill
 from core.dialog.model.DialogSession import DialogSession
 from core.util.Decorators import IntentHandler
+from core.device.model.Device import Device
 
 
 class Broadcast(AliceSkill):
@@ -14,18 +15,17 @@ class Broadcast(AliceSkill):
 
 	def __init__(self):
 		super().__init__()
-		self._preChecks: bool = False
-		self._satelliteQuantity: int = 0
+		self._preChecksDone: bool = False
+		self._deviceQuantity: int = 0
 		self._broadcastMessage: str = ''
-		self._playbackDevice: str = ''
-		self._selectedSat = None
-		self._listOfSatelliteRooms = list()
-		self._sendingDevice: str = ''
-		self._replying: bool = False
+		self._playbackDevice: Device = None
+		self._selectedSat: Device = None
+		self._listOfAllDevices = list()
+		self._sendingDevice: Device = None
 		self._userSpeech = self.AudioServer.LAST_USER_SPEECH
-		self._saidYes: bool = False
+		self._answerReplayNow: bool = False
 		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
-		self._previousReplyDevice: str = ''
+		self._previousReplyDevice: Device = None
 
 	# NOTE: _selectedSat is same as playbackdevice but is used to allow reference to who i'm having a conversation with
 
@@ -48,7 +48,7 @@ class Broadcast(AliceSkill):
 	# used for replying to last known device that sent a broadcast
 	@IntentHandler('BroadcastReply')
 	def reply2LastBroadcast(self, session: DialogSession):
-		if self._previousReplyDevice == session.siteId:
+		if self._previousReplyDevice.uid == session.siteId:
 			self.endDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk(text='replySelf'),
@@ -57,9 +57,8 @@ class Broadcast(AliceSkill):
 			return
 
 		if self._previousReplyDevice:
-			self._playbackDevice = self._previousReplyDevice
-			self._sendingDevice = session.siteId
-			self._selectedSat = self._playbackDevice
+			self._selectedSat = self._playbackDevice = self._previousReplyDevice
+			self._sendingDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk(text='message4previous', replace=[self._previousReplyDevice]),
@@ -74,19 +73,11 @@ class Broadcast(AliceSkill):
 				siteId=session.siteId
 			)
 
-	# If user has choosen a room to play on in a multi satellite senario then do this
+	# If user has choosen a room to play on in a multi satellite scenario then do this
 	@IntentHandler(intent='BroadcastRoom', requiredState='askingWhatRoomToPlayOn', isProtected=True)
 	def userChoosingRoom(self, session: DialogSession):
-
-		# is the user choosing the Alice base unit to talk to ?
-		if 'GetBase' in session.slots:
-			self._playbackDevice = self.getAliceConfig('deviceName')
-			self._selectedSat = self._playbackDevice
-			self.doStatusCheck(session)
-
-		else:
-			self.chooseLocation(session)
-			self.doStatusCheck(session)
+		self.chooseLocation(session)
+		self.doStatusCheck(session)
 
 
 	# Ask user for yes or no responce to playback message now or later (only for users with no available satellites)
@@ -94,11 +85,11 @@ class Broadcast(AliceSkill):
 	def yesOrNoReply(self, session: DialogSession):
 
 		if self.Commons.isYes(session):
-			self._saidYes = True
+			self._answerReplayNow = True
 			self.requestMessage(session)
 
 		else:
-			self._saidYes = False
+			self._answerReplayNow = False
 
 			if self._waveFile.exists():
 				self.endDialog(
@@ -122,7 +113,7 @@ class Broadcast(AliceSkill):
 	def delayingBroadcast(self, session: DialogSession):
 		# If a duration was specified set a timer
 		if 'Duration' in session.slots:
-			self._playbackDevice = session.siteId
+			self._playbackDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('addAMessage'),
@@ -146,8 +137,10 @@ class Broadcast(AliceSkill):
 	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage', isProtected=True)
 	def ProcessFirstInputMessage(self, session: DialogSession):
 		self._broadcastMessage = session.payload['input']
+		self.logInfo(self._broadcastMessage)
+		self.logInfo(self._deviceQuantity)
 
-		if self._satelliteQuantity == 0:
+		if self._deviceQuantity == 1:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
 			# Copy lastUserSpeech.wav to the sounds folder
 
@@ -155,7 +148,7 @@ class Broadcast(AliceSkill):
 				self.Commons.runSystemCommand(['cp', str(delayedRecording), str(self._waveFile)])
 
 			# if user wants to playback now (no satellite senario)
-			if self._saidYes:
+			if self._answerReplayNow:
 				self.playBroadcastMessage(session)
 			else:
 				delayedInterval: float = self.Commons.getDuration(session)
@@ -170,7 +163,7 @@ class Broadcast(AliceSkill):
 				)
 
 		# if user has at least one active satellite then do this
-		elif self._satelliteQuantity >= 1 and self._broadcastMessage and self._playbackDevice:
+		elif self._deviceQuantity >= 2 and self._broadcastMessage and self._playbackDevice:
 			self.playBroadcastMessage(session)
 
 
@@ -178,7 +171,7 @@ class Broadcast(AliceSkill):
 	@IntentHandler(intent='UserRandomAnswer', requiredState='UserIsReplying', isProtected=True)
 	def InputReply(self, session: DialogSession):
 		self._playbackDevice = self._sendingDevice
-		self._sendingDevice = session.siteId
+		self._sendingDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
 		self._broadcastMessage = session.payload['input']
 
 		self.playBroadcastMessage(session)
@@ -197,22 +190,12 @@ class Broadcast(AliceSkill):
 	def chooseLocation(self, session: DialogSession):
 		# if user has specified the location in the initial intent do this
 		if 'Location' in session.slotsAsObjects:
+			location = self.LocationManager.getLocationWithName(session.slotValue('Location'))
 
-			# Accounting for different CaseSensitive room names
-			spokenLocation: str = session.slotValue('Location')
-
-			listOfCaseOptions = ['spokenLocation.lower()', 'spokenLocation.capitalize()', 'spokenLocation.upper()']
-			self._playbackDevice = ''
-
-			for case in listOfCaseOptions:
-				tempLocationCase = eval(case)
-				if tempLocationCase in self._listOfSatelliteRooms:
-					self._playbackDevice = tempLocationCase
-					self._selectedSat = self._playbackDevice
-					return
-
-			if spokenLocation == self.getAliceConfig('deviceName'):
-				self._playbackDevice = spokenLocation
+			if location:
+				self._playbackDevice = self.DeviceManager.getDevicesByLocation(locationID=location.id,
+				                                                               deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
+				                                                               withLinks=True)[0]
 				self._selectedSat = self._playbackDevice
 				return
 
@@ -225,6 +208,8 @@ class Broadcast(AliceSkill):
 					slot='Location',
 					probabilityThreshold=0.1
 				)
+		elif 'GetBase' in session.slots:
+			self._selectedSat = self._playbackDevice = self.DeviceManager.getMainDevice()
 		else:
 			self.continueDialog(
 				sessionId=session.sessionId,
@@ -238,43 +223,30 @@ class Broadcast(AliceSkill):
 
 	def setTheActiveDevices(self, session: DialogSession):
 		# incomming request was from:
-		self._sendingDevice = session.siteId
+		self._sendingDevice = self.DeviceManager.getDeviceByUID(session.siteId)
+		self.logInfo(self._sendingDevice)
 
-		# if request is coming from the only available sat then do this
-		if self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity == 1:
-			self._playbackDevice = self.getAliceConfig('deviceName')
-			self._selectedSat = self._playbackDevice
-
-		# else if there are multiple sats and the request is coming from one of them do this
-		elif self._sendingDevice in self._listOfSatelliteRooms and self._satelliteQuantity >= 2:
-			self.chooseLocation(session)
-
-		# If request is coming from the base unit then do this
-		elif self._satelliteQuantity == 0:
-			# set playback device to the base unit
-			self._playbackDevice = session.siteId
-			self._selectedSat = self._playbackDevice
-
-		elif self._satelliteQuantity == 1:
-			# set playback to the only satellite the user has
-			self._playbackDevice = self._listOfSatelliteRooms[0]
-			self._selectedSat = self._playbackDevice
-
-		elif self._satelliteQuantity >= 2:
-			# Ask user which satellite to use in multi sat senario
+		# if we are at the only device, we send it to our selves
+		if self._deviceQuantity == 1:
+			self._selectedSat = self._playbackDevice = self._sendingDevice
+		# there are exactly two devices, get the other one
+		elif self._deviceQuantity == 2:
+			self._selectedSat = self._playbackDevice = [device for device in self._listOfAllDevices if not device == self._sendingDevice][0]
+		# there are more devices available - choose by 'Location' slot
+		else:
 			self.chooseLocation(session)
 
 
 	# Do pre broadcasting checks
 	def doStatusCheck(self, session: DialogSession):
-		if not self._preChecks:
-			self.getAvailableSatRoomNames()  # make a list of available satellite rooms and get quantity
+		if not self._preChecksDone:
+			self.getAvailableDevices()  # make a list of available devices and get quantity
 		if not self._selectedSat:
 			self.setTheActiveDevices(session)
 
-		if self._selectedSat and 'UserRandomAnswer' not in session.slots and self._satelliteQuantity >= 1:
+		if self._selectedSat and 'UserRandomAnswer' not in session.slots and self._deviceQuantity >= 2:
 			self.requestMessage(session)
-		elif self._selectedSat and 'UserRandomAnswer' not in session.slots and self._satelliteQuantity == 0:
+		elif self._selectedSat and 'UserRandomAnswer' not in session.slots and self._deviceQuantity == 1:
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('playbackRequest'),
@@ -284,28 +256,18 @@ class Broadcast(AliceSkill):
 
 
 	# method for listing all available (active) satellites
-	def getAvailableSatRoomNames(self):
-		self._listOfSatelliteRooms = list()
+	def getAvailableDevices(self):
+		# "offline sats" allows users with alpha branches and/or no heartbeat to play to sats
+		self._listOfAllDevices = self.DeviceManager.getAliceTypeDevices(includeMain=True, connectedOnly=self.getConfig('onlineSatsOnly'))
 
-		# allow users with alpha branches and/or no heartbeat to play to sats
+		self._preChecksDone = True
 
-		# Get list of satellites
-		for device in self.DeviceManager.getDevicesByType('AliceSatellite', connectedOnly=self.getConfig('onlineSatsOnly')):
-			tempListOfRooms = self.LocationManager.getLocation(locId=device.locationID)
-
-			self._listOfSatelliteRooms.append(tempListOfRooms.name)
-		### test lines ###
-		# self._listOfSatelliteRooms = ['Caravan']
-		# self._listOfSatelliteRooms = []
-
-		self._preChecks = True
-
-		if self._listOfSatelliteRooms:
-			self.logDebug(f'Your list of current locations with satellites are : {self._listOfSatelliteRooms}')
-			self._satelliteQuantity = len(self._listOfSatelliteRooms)
+		if self._listOfAllDevices:
+			self.logDebug(f'Your list of current locations with devices are: {[device.getMainLocation().name for device in self._listOfAllDevices]}')
+			self._deviceQuantity = len(self._listOfAllDevices)
 		else:
-			self.logDebug(f'Seems you have no available satellites at the moment')
-			self._satelliteQuantity = 0
+			self.logDebug(f'Seems you have no available devices at the moment')
+			self._deviceQuantity = 0
 
 
 	def delayReplyRequest(self):
@@ -332,19 +294,20 @@ class Broadcast(AliceSkill):
 
 	# Play the broadcast
 	def playBroadcastMessage(self, session: DialogSession):
+		self.logInfo(self._sendingDevice)
 		self._previousReplyDevice = self._sendingDevice
 		self.playBroadcastSound()
 		# if user has selected to play voice message broadcasts then do this
 		if self.getConfig('useVoiceRecording'):
 			lastRecording = Path(self._userSpeech.format(session.user, session.siteId))
-			self.playSound(lastRecording.stem, location=lastRecording.parent, siteId=self._playbackDevice)
+			self.playSound(lastRecording.stem, location=lastRecording.parent, siteId=self._playbackDevice.uid)
 			self.endSession(sessionId=session.sessionId)
 
-			if self._satelliteQuantity == 0:
+			if self._deviceQuantity == 1:
 				return
 
 			# If user also has choosen to allow replies then do this
-			if self.getConfig('allowReplies') and self._satelliteQuantity >= 1:
+			if self.getConfig('allowReplies') and self._deviceQuantity >= 2:
 				self.ThreadManager.doLater(
 					interval=5.0,
 					func=self.delayReplyRequest
@@ -352,7 +315,7 @@ class Broadcast(AliceSkill):
 
 		elif not self.getConfig('useVoiceRecording'):
 
-			if self.getConfig('allowReplies') and self._satelliteQuantity >= 1:
+			if self.getConfig('allowReplies') and self._deviceQuantity >= 2:
 
 				self.endDialog(
 					sessionId=session.sessionId,
@@ -380,17 +343,16 @@ class Broadcast(AliceSkill):
 			soundFilename='broadcastNotification',
 			location=self.getResource('sounds'),
 			sessionId='BroadcastAlert',
-			siteId=self._playbackDevice
+			siteId=self._playbackDevice.uid
 		)
 
 
 	def resetValues(self):
 		self._broadcastMessage: str = ''
-		self._playbackDevice: str = ''
 		self._selectedSat = None
-		self._sendingDevice: str = ''
-		self._replying: bool = False
-		self._saidYes: bool = False
+		self._playbackDevice = None
+		self._sendingDevice = None
+		self._answerReplayNow: bool = False
 
 
 	# the delayed sound file to play
@@ -399,7 +361,7 @@ class Broadcast(AliceSkill):
 			soundFilename='delayedSound',
 			location=self.getResource('sounds'),
 			sessionId='DelayedBroadcastAlert',
-			siteId=self._playbackDevice
+			siteId=self._playbackDevice.uid
 		)
 		self.Commons.runSystemCommand(['rm', str(self._waveFile)])
 
