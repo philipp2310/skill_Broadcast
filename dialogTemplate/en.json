@@ -1,7 +1,5 @@
 {
     "skill": "Broadcast",
-    "icon": "time",
-    "description": "Broadcast voice message to satellites",
     "slotTypes": [
 		{
 			"name": "Broadcast",
@@ -52,7 +50,6 @@
     "intents": [
         {
         	"name": "AddBroadcast",
-        	"description": "User requests to broadcast a message",
         	"enabledByDefault": true,
         	"utterances": [
 				"send a {broadcast:=>Broadcast}",
@@ -81,7 +78,6 @@
         },
 		{
 			"name": "BroadcastTime",
-			"description": "add a Time for play back",
 			"enabledByDefault": false,
 			"utterances": [
 				"{in 1 hour:=>Duration}",
@@ -101,7 +97,6 @@
 		},
 		{
 			"name": "BroadcastRoom",
-			"description": "For users who have more than one satellite",
 			"enabledByDefault": false,
 			"utterances": [
 				"The {kitchen:=>Location} please",
@@ -133,7 +128,6 @@
 		},
 		{
 			"name": "BroadcastReply",
-			"description": "Reply to the last broadcast",
 			"enabledByDefault": true,
 			"utterances": [
 				"{reply:=>lastBroadcast} to the {last:=>lastBroadcast} broadcast",
