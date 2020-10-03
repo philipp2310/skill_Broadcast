@@ -62,14 +62,12 @@
         	"slots": [
         		{
         			"name": "Broadcast",
-        			"description": null,
         			"required": false,
         			"type": "Broadcast",
         			"missingQuestion": ""
         		},
 				{
 					"name": "Location",
-					"description": null,
 					"required": false,
 					"type": "Alice/Location",
 					"missingQuestion": ""
@@ -88,7 +86,6 @@
 			"slots": [
 				{
 					"name": "Duration",
-					"description": null,
 					"required": false,
 					"type": "snips/duration",
 					"missingQuestion": ""
@@ -112,14 +109,12 @@
 			"slots": [
 				{
 					"name": "Location",
-					"description": null,
 					"required": false,
 					"type": "Alice/Location",
 					"missingQuestion": ""
 				},
 				{
 					"name": "GetBase",
-					"description": null,
 					"required": false,
 					"type": "GetBase",
 					"missingQuestion": ""
@@ -140,7 +135,6 @@
 			"slots": [
 				{
 					"name": "lastBroadcast",
-					"description": null,
 					"required": false,
 					"type": "replyLastBroadcast",
 					"missingQuestion": ""
