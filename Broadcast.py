@@ -74,14 +74,14 @@ class Broadcast(AliceSkill):
 			)
 
 	# If user has choosen a room to play on in a multi satellite scenario then do this
-	@IntentHandler(intent='BroadcastRoom', requiredState='askingWhatRoomToPlayOn', isProtected=True)
+	@IntentHandler(intent='BroadcastRoom', requiredState='askingWhatRoomToPlayOn')
 	def userChoosingRoom(self, session: DialogSession):
 		self.chooseLocation(session)
 		self.doStatusCheck(session)
 
 
 	# Ask user for yes or no responce to playback message now or later (only for users with no available satellites)
-	@IntentHandler(intent='AnswerYesOrNo', requiredState='askingIfPlaybackShouldBeNow', isProtected=True)
+	@IntentHandler(intent='AnswerYesOrNo', requiredState='askingIfPlaybackShouldBeNow')
 	def yesOrNoReply(self, session: DialogSession):
 
 		if self.Commons.isYes(session):
@@ -109,7 +109,7 @@ class Broadcast(AliceSkill):
 
 
 	# If the user has requested to delay the responce (main unit systems only) then do this
-	@IntentHandler(intent='BroadcastTime', requiredState='UserWantsToDelayBroadcast', isProtected=True)
+	@IntentHandler(intent='BroadcastTime', requiredState='UserWantsToDelayBroadcast')
 	def delayingBroadcast(self, session: DialogSession):
 		# If a duration was specified set a timer
 		if 'Duration' in session.slots:
@@ -134,7 +134,7 @@ class Broadcast(AliceSkill):
 
 
 	# Add the broadcast message now that choosing location has been satisfied, and playback to the device
-	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage', isProtected=True)
+	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage')
 	def ProcessFirstInputMessage(self, session: DialogSession):
 		self._broadcastMessage = session.payload['input']
 		self.logInfo(self._broadcastMessage)
@@ -168,7 +168,7 @@ class Broadcast(AliceSkill):
 
 
 	# Below runs when a reply to the initial broadcast is recieved
-	@IntentHandler(intent='UserRandomAnswer', requiredState='UserIsReplying', isProtected=True)
+	@IntentHandler(intent='UserRandomAnswer', requiredState='UserIsReplying')
 	def InputReply(self, session: DialogSession):
 		self._playbackDevice = self._sendingDevice
 		self._sendingDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
@@ -178,7 +178,7 @@ class Broadcast(AliceSkill):
 
 
 	# Below runs when a reply has been asked by the user
-	@IntentHandler(intent='UserRandomAnswer', requiredState='send2previous', isProtected=True)
+	@IntentHandler(intent='UserRandomAnswer', requiredState='send2previous')
 	def ReplyToLastBroadcastDevice(self, session: DialogSession):
 		self._broadcastMessage = session.payload['input']
 
