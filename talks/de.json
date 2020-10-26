@@ -88,5 +88,34 @@
 		"short": [
 			"Sorry, ich habe schon eine Nachricht."
 		]
+	},
+	"replySelf": {
+		"default": [
+			"Oh nein, du darfst dir nicht selbst antworten.. das grenzt ja an Wahnsinn.",
+			"Hast du nicht gerade selbst die letzte Nachricht verschickt?",
+			"Du willst dir selbst antworten? Das verstehe ich nicht."
+		],
+		"short": [
+			"Die letzte Nachricht stammt von dir"
+		]
+	},
+	"message4previous": {
+		"default": [
+			"Ok, welche Nachricht soll ich schicken zu: {0}",
+			"Ok, ich schicke deine Antwort zurück nach: {0}"
+		],
+		"short": [
+			"Wie ist die Nachricht?"
+		]
+	},
+	"previousMessageError": {
+		"default": [
+			"Ohje, das alter.. ich erinner mich nicht an die letzte Nachricht.",
+			"Es tut mir leid, ich finde keine Nachricht zum antworten."
+		],
+		"short": [
+			"Das geht nicht.",
+			"Keine vorherige Nachricht vorhanden."
+		]
 	}
 }

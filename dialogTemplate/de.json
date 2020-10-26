@@ -1,7 +1,5 @@
 {
     "skill": "Broadcast",
-    "icon": "time",
-    "description": "Broadcast voice message to satellites",
     "slotTypes": [
         {
             "name": "Broadcast",
@@ -15,6 +13,22 @@
 						"Broadcast",
 						"Nachricht",
 						"broadcaste"
+					]
+				}
+			]
+		},
+		{
+			"name": "replyLastBroadcast",
+			"matchingStrictness": null,
+			"automaticallyExtensible": true,
+			"useSynonyms": true,
+			"values": [
+				{
+					"value": "reply",
+					"synonyms": [
+						"antwort",
+						"antworte",
+						"antworten"
 					]
 				}
 			]
@@ -40,7 +54,6 @@
     "intents": [
         {
         	"name": "AddBroadcast",
-        	"description": "User requests to broadcast a message",
         	"enabledByDefault": true,
         	"utterances": [
 				"Sende einen {broadcast:=>Broadcast}",
@@ -54,14 +67,12 @@
         	"slots": [
         		{
         			"name": "Broadcast",
-        			"description": null,
         			"required": false,
         			"type": "Broadcast",
         			"missingQuestion": ""
         		},
 				{
 					"name": "Location",
-					"description": null,
 					"required": false,
 					"type": "Alice/Location",
 					"missingQuestion": ""
@@ -70,7 +81,6 @@
         },
 		{
 			"name": "BroadcastTime",
-			"description": "add a Time for play back",
 			"enabledByDefault": false,
 			"utterances": [
 				"{in 1 hour:=>Duration}",
@@ -81,7 +91,6 @@
 			"slots": [
 				{
 					"name": "Duration",
-					"description": null,
 					"required": false,
 					"type": "snips/duration",
 					"missingQuestion": ""
@@ -90,7 +99,6 @@
 		},
 		{
 			"name": "BroadcastRoom",
-			"description": "For users who have more than one satellite",
 			"enabledByDefault": false,
 			"utterances": [
 				"Die {kitchen:=>Location} bitte",
@@ -105,16 +113,40 @@
 			"slots": [
 				{
 					"name": "Location",
-					"description": null,
 					"required": false,
 					"type": "Alice/Location",
 					"missingQuestion": ""
 				},
 				{
 					"name": "GetBase",
-					"description": null,
 					"required": false,
 					"type": "GetBase",
+					"missingQuestion": ""
+				}
+			]
+		},
+		{
+			"name": "BroadcastReply",
+			"enabledByDefault": true,
+			"utterances": [
+				"{antworte:=>lastBroadcast} auf die letzte Nachricht",
+				"{antwort:=>lastBroadcast} zur letzten Nachricht",
+				"{antwort:=>lastBroadcast} zum letzten Broadcast",
+				"{antworte:=>lastBroadcast} auf den letzten Broadcast",
+				"schicke eine {antwort:=>lastBroadcast} zur letzten Nachricht",
+				"schicke eine {antwort:=>lastBroadcast} zum letzten Broadcast",
+				"schicke eine {antwort:=>lastBroadcast} dazu",
+				"schicke eine {antwort:=>lastBroadcast} darauf",
+				"ich möchte darauf {antworten:=>lastBroadcast}",
+				"ich möchte eine {antworte:=>lastBroadcast} verschicken",
+				"bitte verschicke eine {antwort:=>lastBroadcast} dazu",
+				"bitte sende eine {antwort:=>lastBroadcast} dazu"
+			],
+			"slots": [
+				{
+					"name": "lastBroadcast",
+					"required": false,
+					"type": "replyLastBroadcast",
 					"missingQuestion": ""
 				}
 			]
