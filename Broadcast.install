@@ -1,16 +1,17 @@
 {
-    "name": "Broadcast",
-    "version": "1.0.12",
-    "icon": "far fa-comments",
-    "category": "entertainment",
-    "author": "Lazza",
-    "maintainers": [
-        "Psycho",
-        "philipp2310"
-    ],
-    "desc": "Broadcast voice message to satellites",
-    "aliceMinVersion": "1.0.0-b3",
-    "systemRequirements": [],
+	"name": "Broadcast",
+	"speakableName": "broadcast skill",
+	"version": "1.0.13",
+	"icon": "far fa-comments",
+	"category": "entertainment",
+	"author": "Lazza",
+	"maintainers": [
+		"Psycho",
+		"philipp2310"
+	],
+	"desc": "Broadcast voice message to satellites",
+	"aliceMinVersion": "1.0.0-b3",
+	"systemRequirements": [],
     "pipRequirements": [],
     "conditions": {
         "lang": [

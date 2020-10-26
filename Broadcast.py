@@ -137,8 +137,9 @@ class Broadcast(AliceSkill):
 	@IntentHandler(intent='UserRandomAnswer', requiredState='requestingBroadcastMessage')
 	def ProcessFirstInputMessage(self, session: DialogSession):
 		self._broadcastMessage = session.payload['input']
-		self.logInfo(self._broadcastMessage)
-		self.logInfo(self._deviceQuantity)
+		# SONAR IGNORE
+		# self.logInfo(self._broadcastMessage)
+		# self.logInfo(self._deviceQuantity)
 
 		if self._deviceQuantity == 1:
 			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
@@ -224,7 +225,7 @@ class Broadcast(AliceSkill):
 	def setTheActiveDevices(self, session: DialogSession):
 		# incomming request was from:
 		self._sendingDevice = self.DeviceManager.getDeviceByUID(session.siteId)
-		self.logInfo(self._sendingDevice)
+		# self.logInfo(self._sendingDevice)
 
 		# if we are at the only device, we send it to our selves
 		if self._deviceQuantity == 1:
@@ -273,7 +274,7 @@ class Broadcast(AliceSkill):
 	def delayReplyRequest(self):
 		self.ask(
 			text=self.randomTalk('replyRequest'),
-			siteId=self._playbackDevice,
+			siteId=str(self._playbackDevice),
 			intentFilter=['UserRandomAnswer'],
 			currentDialogState='UserIsReplying',
 			canBeEnqueued=False,
@@ -294,7 +295,7 @@ class Broadcast(AliceSkill):
 
 	# Play the broadcast
 	def playBroadcastMessage(self, session: DialogSession):
-		self.logInfo(self._sendingDevice)
+		# self.logInfo(self._sendingDevice)
 		self._previousReplyDevice = self._sendingDevice
 		self.playBroadcastSound()
 		# if user has selected to play voice message broadcasts then do this
@@ -319,7 +320,7 @@ class Broadcast(AliceSkill):
 
 				self.endDialog(
 					sessionId=session.sessionId,
-					siteId=self._playbackDevice,
+					siteId=str(self._playbackDevice),
 					text=self._broadcastMessage
 				)
 
@@ -334,7 +335,7 @@ class Broadcast(AliceSkill):
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self._broadcastMessage,
-					siteId=self._playbackDevice
+					siteId=str(self._playbackDevice)
 				)
 
 
