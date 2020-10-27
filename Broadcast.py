@@ -192,11 +192,14 @@ class Broadcast(AliceSkill):
 		# if user has specified the location in the initial intent do this
 		if 'Location' in session.slotsAsObjects:
 			location = self.LocationManager.getLocationWithName(session.slotValue('Location'))
-
 			if location:
-				self._playbackDevice = self.DeviceManager.getDevicesByLocation(locationID=location.id,
-				                                                               deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
-				                                                               withLinks=True)[0]
+				# self._playbackDevice = self.DeviceManager.getDevicesByLocation(locationID=location.id,
+				#                                                               deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
+				#                                                               withLinks=True)[0]
+				for device in self._listOfAllDevices:
+					if location.id == device.locationID:
+						self._playbackDevice = device
+
 				self._selectedSat = self._playbackDevice
 				return
 
@@ -225,7 +228,6 @@ class Broadcast(AliceSkill):
 	def setTheActiveDevices(self, session: DialogSession):
 		# incomming request was from:
 		self._sendingDevice = self.DeviceManager.getDeviceByUID(session.siteId)
-		# self.logInfo(self._sendingDevice)
 
 		# if we are at the only device, we send it to our selves
 		if self._deviceQuantity == 1:
@@ -258,13 +260,12 @@ class Broadcast(AliceSkill):
 
 	# method for listing all available (active) satellites
 	def getAvailableDevices(self):
+
 		# "offline sats" allows users with alpha branches and/or no heartbeat to play to sats
 		self._listOfAllDevices = self.DeviceManager.getAliceTypeDevices(includeMain=True, connectedOnly=self.getConfig('onlineSatsOnly'))
-
 		self._preChecksDone = True
 
 		if self._listOfAllDevices:
-			self.logDebug(f'Your list of current locations with devices are: {[device.getMainLocation().name for device in self._listOfAllDevices]}')
 			self._deviceQuantity = len(self._listOfAllDevices)
 		else:
 			self.logDebug(f'Seems you have no available devices at the moment')
@@ -274,7 +275,7 @@ class Broadcast(AliceSkill):
 	def delayReplyRequest(self):
 		self.ask(
 			text=self.randomTalk('replyRequest'),
-			siteId=str(self._playbackDevice),
+			siteId=self._playbackDevice.uid,
 			intentFilter=['UserRandomAnswer'],
 			currentDialogState='UserIsReplying',
 			canBeEnqueued=False,
@@ -317,10 +318,9 @@ class Broadcast(AliceSkill):
 		elif not self.getConfig('useVoiceRecording'):
 
 			if self.getConfig('allowReplies') and self._deviceQuantity >= 2:
-
 				self.endDialog(
 					sessionId=session.sessionId,
-					siteId=str(self._playbackDevice),
+					siteId=self._playbackDevice.uid,
 					text=self._broadcastMessage
 				)
 
@@ -335,7 +335,7 @@ class Broadcast(AliceSkill):
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self._broadcastMessage,
-					siteId=str(self._playbackDevice)
+					siteId=self._playbackDevice.uid
 				)
 
 

@@ -1,7 +1,7 @@
 {
 	"name": "Broadcast",
 	"speakableName": "broadcast skill",
-	"version": "1.0.13",
+	"version": "1.0.14",
 	"icon": "far fa-comments",
 	"category": "entertainment",
 	"author": "Lazza",
