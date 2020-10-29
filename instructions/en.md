@@ -79,5 +79,5 @@ The message will then get sent to the last known device that initiated a broadca
        
 ### <span style="color: green">**Special NOTE**</span>
 
-Enabling UseVoiceRecordning option in settings will also automatically enable 
+Enabling UseVoiceRecording option in settings will also automatically enable 
 the voice recording on wakeword feature built into Alice (found in the admin Web UI).
