@@ -39,7 +39,6 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
   does not use the heartbeat code
 
 
-
 ## <span style="color: blue">**Usage examples**</span>
     
 <span style="color: yellow">*(common usage)*</span>
