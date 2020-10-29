@@ -27,6 +27,7 @@ class Broadcast(AliceSkill):
 		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
 		self._previousReplyDevice: Device = None
 
+
 	# NOTE: _selectedSat is same as playbackdevice but is used to allow reference to who i'm having a conversation with
 
 	######################## INTENT HANDLERS ############################
@@ -44,6 +45,7 @@ class Broadcast(AliceSkill):
 
 		# Do prelimanary checks IE: Set the message and or the satellite room
 		self.doStatusCheck(session)
+
 
 	# used for replying to last known device that sent a broadcast
 	@IntentHandler('BroadcastReply')
@@ -72,6 +74,7 @@ class Broadcast(AliceSkill):
 				text=self.randomTalk('previousMessageError'),
 				siteId=session.siteId
 			)
+
 
 	# If user has choosen a room to play on in a multi satellite scenario then do this
 	@IntentHandler(intent='BroadcastRoom', requiredState='askingWhatRoomToPlayOn')
@@ -185,6 +188,7 @@ class Broadcast(AliceSkill):
 
 		self.playBroadcastMessage(session)
 
+
 	######### THE CONFIGURATION GROUP ##############
 
 	# This method is used when a user chooses a location
@@ -193,12 +197,10 @@ class Broadcast(AliceSkill):
 		if 'Location' in session.slotsAsObjects:
 			location = self.LocationManager.getLocationWithName(session.slotValue('Location'))
 			if location:
-				# self._playbackDevice = self.DeviceManager.getDevicesByLocation(locationID=location.id,
-				#                                                               deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
-				#                                                               withLinks=True)[0]
-				for device in self._listOfAllDevices:
-					if location.id == device.locationID:
-						self._playbackDevice = device
+				self._playbackDevice = \
+					self.DeviceManager.getDevicesByLocation(locationID=location.id,
+					                                        deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
+					                                        withLinks=True)[0]
 
 				self._selectedSat = self._playbackDevice
 				return
@@ -365,4 +367,3 @@ class Broadcast(AliceSkill):
 			siteId=self._playbackDevice.uid
 		)
 		self.Commons.runSystemCommand(['rm', str(self._waveFile)])
-
