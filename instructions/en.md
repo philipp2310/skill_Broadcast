@@ -76,8 +76,7 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
 The message will then get sent to the last known device that initiated a broadcast
 (NOTE: This feature works regardless of the state of "AllowReplies" being enabled or not) 
     
-       
+      
 ### <span style="color: green">**Special NOTE**</span>
 
-Enabling UseVoiceRecording option in settings will also automatically enable 
-the voice recording on wakeword feature built into Alice (found in the admin Web UI).
+Enabling UseVoiceRecording option in settings will also automatically enable the voice recording on wakeword feature built into Alice (found in the admin Web UI).
