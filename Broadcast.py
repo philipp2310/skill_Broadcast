@@ -52,15 +52,21 @@ class Broadcast(AliceSkill):
 	# used for replying to last known device that sent a broadcast
 	@IntentHandler('BroadcastReply')
 	def reply2LastBroadcast(self, session: DialogSession):
-		if self._previousReplyDevice.uid == session.siteId:
+		if not self._previousReplyDevice:
 			self.endDialog(
 				sessionId=session.sessionId,
-				text=self.randomTalk(text='replySelf'),
+				text=self.randomTalk('previousMessageError'),
 				siteId=session.siteId
 			)
-			return
+		else:
+			if self._previousReplyDevice.uid == session.siteId:
+				self.endDialog(
+					sessionId=session.sessionId,
+					text=self.randomTalk(text='replySelf'),
+					siteId=session.siteId
+				)
+				return
 
-		if self._previousReplyDevice:
 			self._selectedSat = self._playbackDevice = self._previousReplyDevice
 			self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
 			self.continueDialog(
@@ -69,12 +75,6 @@ class Broadcast(AliceSkill):
 				intentFilter=['UserRandomAnswer'],
 				currentDialogState='send2previous',
 				probabilityThreshold=0.1
-			)
-		if not self._previousReplyDevice:
-			self.endDialog(
-				sessionId=session.sessionId,
-				text=self.randomTalk('previousMessageError'),
-				siteId=session.siteId
 			)
 
 
