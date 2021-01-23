@@ -1,6 +1,8 @@
 from pathlib import Path
+from typing import Optional
 
 from core.base.model.AliceSkill import AliceSkill
+from core.device.model.DeviceAbility import DeviceAbility
 from core.dialog.model.DialogSession import DialogSession
 from core.util.Decorators import IntentHandler
 from core.device.model.Device import Device
@@ -18,14 +20,14 @@ class Broadcast(AliceSkill):
 		self._preChecksDone: bool = False
 		self._deviceQuantity: int = 0
 		self._broadcastMessage: str = ''
-		self._playbackDevice: Device = None
-		self._selectedSat: Device = None
+		self._playbackDevice: Optional[Device] = None
+		self._selectedSat: Optional[Device] = None
 		self._listOfAllDevices = list()
-		self._sendingDevice: Device = None
+		self._sendingDevice: Optional[Device] = None
 		self._userSpeech = self.AudioServer.LAST_USER_SPEECH
 		self._answerReplayNow: bool = False
 		self._waveFile = Path(f'{self.getResource("sounds")}/delayedSound.wav')
-		self._previousReplyDevice: Device = None
+		self._previousReplyDevice: Optional[Device] = None
 
 
 	# NOTE: _selectedSat is same as playbackdevice but is used to allow reference to who i'm having a conversation with
@@ -60,7 +62,7 @@ class Broadcast(AliceSkill):
 
 		if self._previousReplyDevice:
 			self._selectedSat = self._playbackDevice = self._previousReplyDevice
-			self._sendingDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
+			self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk(text='message4previous', replace=[self._previousReplyDevice]),
@@ -116,7 +118,7 @@ class Broadcast(AliceSkill):
 	def delayingBroadcast(self, session: DialogSession):
 		# If a duration was specified set a timer
 		if 'Duration' in session.slots:
-			self._playbackDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
+			self._playbackDevice = self.DeviceManager.getDevice(uid=session.siteId)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('addAMessage'),
@@ -175,7 +177,7 @@ class Broadcast(AliceSkill):
 	@IntentHandler(intent='UserRandomAnswer', requiredState='UserIsReplying')
 	def InputReply(self, session: DialogSession):
 		self._playbackDevice = self._sendingDevice
-		self._sendingDevice = self.DeviceManager.getDeviceByUID(uid=session.siteId)
+		self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
 		self._broadcastMessage = session.payload['input']
 
 		self.playBroadcastMessage(session)
@@ -195,14 +197,9 @@ class Broadcast(AliceSkill):
 	def chooseLocation(self, session: DialogSession):
 		# if user has specified the location in the initial intent do this
 		if 'Location' in session.slotsAsObjects:
-			location = self.LocationManager.getLocationWithName(session.slotValue('Location'))
+			location = self.LocationManager.getLocationByName(session.slotValue('Location'))
 			if location:
-				self._playbackDevice = \
-					self.DeviceManager.getDevicesByLocation(locationID=location.id,
-					                                        deviceTypeID=self.DeviceManager.getAliceTypeDeviceTypeIds(),
-					                                        withLinks=True)[0]
-
-				self._selectedSat = self._playbackDevice
+				self._selectedSat = self.DeviceManager.getDevicesByLocation(locationId=location.id, abilities=[DeviceAbility.PLAY_SOUND])
 				return
 
 			if not self._playbackDevice:
@@ -229,7 +226,7 @@ class Broadcast(AliceSkill):
 
 	def setTheActiveDevices(self, session: DialogSession):
 		# incomming request was from:
-		self._sendingDevice = self.DeviceManager.getDeviceByUID(session.siteId)
+		self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
 
 		# if we are at the only device, we send it to our selves
 		if self._deviceQuantity == 1:
@@ -264,7 +261,7 @@ class Broadcast(AliceSkill):
 	def getAvailableDevices(self):
 
 		# "offline sats" allows users with alpha branches and/or no heartbeat to play to sats
-		self._listOfAllDevices = self.DeviceManager.getAliceTypeDevices(includeMain=True, connectedOnly=self.getConfig('onlineSatsOnly'))
+		self._listOfAllDevices = self.DeviceManager.getDevicesWithAbilities(abilites=[DeviceAbility.PLAY_SOUND], connectedOnly=self.getConfig('onlineSatsOnly'))
 		self._preChecksDone = True
 
 		if self._listOfAllDevices:
