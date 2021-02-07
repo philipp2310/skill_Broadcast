@@ -261,7 +261,7 @@ class Broadcast(AliceSkill):
 	def getAvailableDevices(self):
 
 		# "offline sats" allows users with alpha branches and/or no heartbeat to play to sats
-		self._listOfAllDevices = self.DeviceManager.getDevicesWithAbilities(abilites=[DeviceAbility.PLAY_SOUND], connectedOnly=self.getConfig('onlineSatsOnly'))
+		self._listOfAllDevices = self.DeviceManager.getDevicesWithAbilities(abilities=[DeviceAbility.PLAY_SOUND], connectedOnly=self.getConfig('onlineSatsOnly'))
 		self._preChecksDone = True
 
 		if self._listOfAllDevices:
