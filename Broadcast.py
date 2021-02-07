@@ -301,7 +301,7 @@ class Broadcast(AliceSkill):
 		# if user has selected to play voice message broadcasts then do this
 		if self.getConfig('useVoiceRecording'):
 			lastRecording = Path(self._userSpeech.format(session.user, session.deviceUid))
-			self.playSound(lastRecording.stem, location=lastRecording.parent, deviceUid=self._playbackDevice.uid)
+			self.playSound(lastRecording.stem, location=lastRecording.parent, deviceUid=self._playbackDevice.uid) # No error!
 			self.endSession(sessionId=session.sessionId)
 
 			if self._deviceQuantity == 1:
@@ -319,7 +319,7 @@ class Broadcast(AliceSkill):
 			if self.getConfig('allowReplies') and self._deviceQuantity >= 2:
 				self.endDialog(
 					sessionId=session.sessionId,
-					deviceUid=self._playbackDevice.uid,
+					deviceUid=self._playbackDevice.uid, # No error!
 					text=self._broadcastMessage
 				)
 
@@ -334,7 +334,7 @@ class Broadcast(AliceSkill):
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self._broadcastMessage,
-					deviceUid=self._playbackDevice.uid
+					deviceUid=self._playbackDevice.uid # No error!
 				)
 
 
