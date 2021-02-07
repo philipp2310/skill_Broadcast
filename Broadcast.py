@@ -56,19 +56,19 @@ class Broadcast(AliceSkill):
 			self.endDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('previousMessageError'),
-				siteId=session.siteId
+				deviceUid=session.deviceUid
 			)
 		else:
-			if self._previousReplyDevice.uid == session.siteId:
+			if self._previousReplyDevice.uid == session.deviceUid:
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self.randomTalk(text='replySelf'),
-					siteId=session.siteId
+					deviceUid=session.deviceUid
 				)
 				return
 
 			self._selectedSat = self._playbackDevice = self._previousReplyDevice
-			self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
+			self._sendingDevice = self.DeviceManager.getDevice(uid=session.deviceUid)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk(text='message4previous', replace=[self._previousReplyDevice]),
@@ -100,7 +100,7 @@ class Broadcast(AliceSkill):
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self.randomTalk('delayError'),
-					siteId=session.siteId
+					deviceUid=session.deviceUid
 				)
 
 			else:
@@ -118,7 +118,7 @@ class Broadcast(AliceSkill):
 	def delayingBroadcast(self, session: DialogSession):
 		# If a duration was specified set a timer
 		if 'Duration' in session.slots:
-			self._playbackDevice = self.DeviceManager.getDevice(uid=session.siteId)
+			self._playbackDevice = self.DeviceManager.getDevice(uid=session.deviceUid)
 			self.continueDialog(
 				sessionId=session.sessionId,
 				text=self.randomTalk('addAMessage'),
@@ -147,7 +147,7 @@ class Broadcast(AliceSkill):
 		# self.logInfo(self._deviceQuantity)
 
 		if self._deviceQuantity == 1:
-			delayedRecording = Path(self._userSpeech.format(session.user, session.siteId))
+			delayedRecording = Path(self._userSpeech.format(session.user, session.deviceUid))
 			# Copy lastUserSpeech.wav to the sounds folder
 
 			if delayedRecording:
@@ -177,7 +177,7 @@ class Broadcast(AliceSkill):
 	@IntentHandler(intent='UserRandomAnswer', requiredState='UserIsReplying')
 	def InputReply(self, session: DialogSession):
 		self._playbackDevice = self._sendingDevice
-		self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
+		self._sendingDevice = self.DeviceManager.getDevice(uid=session.deviceUid)
 		self._broadcastMessage = session.payload['input']
 
 		self.playBroadcastMessage(session)
@@ -226,7 +226,7 @@ class Broadcast(AliceSkill):
 
 	def setTheActiveDevices(self, session: DialogSession):
 		# incomming request was from:
-		self._sendingDevice = self.DeviceManager.getDevice(uid=session.siteId)
+		self._sendingDevice = self.DeviceManager.getDevice(uid=session.deviceUid)
 
 		# if we are at the only device, we send it to our selves
 		if self._deviceQuantity == 1:
@@ -274,7 +274,7 @@ class Broadcast(AliceSkill):
 	def delayReplyRequest(self):
 		self.ask(
 			text=self.randomTalk('replyRequest'),
-			siteId=self._playbackDevice.uid,
+			deviceUid=self._playbackDevice.uid,
 			intentFilter=['UserRandomAnswer'],
 			currentDialogState='UserIsReplying',
 			canBeEnqueued=False,
@@ -300,8 +300,8 @@ class Broadcast(AliceSkill):
 		self.playBroadcastSound()
 		# if user has selected to play voice message broadcasts then do this
 		if self.getConfig('useVoiceRecording'):
-			lastRecording = Path(self._userSpeech.format(session.user, session.siteId))
-			self.playSound(lastRecording.stem, location=lastRecording.parent, siteId=self._playbackDevice.uid)
+			lastRecording = Path(self._userSpeech.format(session.user, session.deviceUid))
+			self.playSound(lastRecording.stem, location=lastRecording.parent, deviceUid=self._playbackDevice.uid)
 			self.endSession(sessionId=session.sessionId)
 
 			if self._deviceQuantity == 1:
@@ -319,7 +319,7 @@ class Broadcast(AliceSkill):
 			if self.getConfig('allowReplies') and self._deviceQuantity >= 2:
 				self.endDialog(
 					sessionId=session.sessionId,
-					siteId=self._playbackDevice.uid,
+					deviceUid=self._playbackDevice.uid,
 					text=self._broadcastMessage
 				)
 
@@ -334,7 +334,7 @@ class Broadcast(AliceSkill):
 				self.endDialog(
 					sessionId=session.sessionId,
 					text=self._broadcastMessage,
-					siteId=self._playbackDevice.uid
+					deviceUid=self._playbackDevice.uid
 				)
 
 
@@ -343,7 +343,7 @@ class Broadcast(AliceSkill):
 			soundFilename='broadcastNotification',
 			location=self.getResource('sounds'),
 			sessionId='BroadcastAlert',
-			siteId=self._playbackDevice.uid
+			deviceUid=self._playbackDevice.uid
 		)
 
 
@@ -361,6 +361,6 @@ class Broadcast(AliceSkill):
 			soundFilename='delayedSound',
 			location=self.getResource('sounds'),
 			sessionId='DelayedBroadcastAlert',
-			siteId=self._playbackDevice.uid
+			deviceUid=self._playbackDevice.uid
 		)
 		self.Commons.runSystemCommand(['rm', str(self._waveFile)])
