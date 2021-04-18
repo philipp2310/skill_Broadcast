@@ -1,4 +1,4 @@
-##Broadcast Skill - General description
+## Broadcast Skill - General description
 
 The Broadcast skill is designed to allow you to send a message to another device such as a satellite.
 
@@ -13,7 +13,7 @@ If you don't have a second device on the network (or your satellite is offline) 
 to you on the device requested from. This might be of use if you want to test your system or send a delayed 
 message to your wife as a little suprise... EG: "You look good today".
     
-##Settings
+## Settings
 
 In the 'skill' tab on the web interface, click "skill settings" on the broadcast skill. There are three options in there
 
@@ -37,7 +37,7 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
   does not use the heartbeat code
 
 
-##Usage examples
+## Usage examples
     
 *(common usage)*
 
@@ -75,6 +75,6 @@ The message will then get sent to the last known device that initiated a broadca
 (NOTE: This feature works regardless of the state of "AllowReplies" being enabled or not) 
     
       
-###Special NOTE
+### Special NOTE
 
 Enabling UseVoiceRecording option in settings will also automatically enable the voice recording on wakeword feature built into Alice (found in the admin Web UI).
