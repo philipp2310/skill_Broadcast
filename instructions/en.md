@@ -1,6 +1,4 @@
-#<span style="color: #ff0000;"><strong>Broadcast Skill</strong></span>
-
-##<span style="color: blue">**Broadcast Skill - General description**</span>
+##Broadcast Skill - General description
 
 The Broadcast skill is designed to allow you to send a message to another device such as a satellite.
 
@@ -15,7 +13,7 @@ If you don't have a second device on the network (or your satellite is offline) 
 to you on the device requested from. This might be of use if you want to test your system or send a delayed 
 message to your wife as a little suprise... EG: "You look good today".
     
-##<span style="color: blue">**Settings**</span>
+##Settings
 
 In the 'skill' tab on the web interface, click "skill settings" on the broadcast skill. There are three options in there
 
@@ -39,15 +37,15 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
   does not use the heartbeat code
 
 
-## <span style="color: blue">**Usage examples**</span>
+##Usage examples
     
-<span style="color: yellow">*(common usage)*</span>
+*(common usage)*
 
  - "Hey Snips/Alice"
  - "Send a broadcast."
  - "Bring me a beer when you come outside next please"
 
-<span style="color: yellow">*(usage example with replies enabled)*</span>
+*(usage example with replies enabled)*
 
  - "Hey Snips/Alice"
  - "Broadcast to the kids room"
@@ -55,7 +53,7 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
  - kids then reply back to main unit ..."but i don't want too"
  - You then reply ... "insert bribery responce here " :)
     
-<span style="color: yellow">*(usage example with no satellites)*</span>
+*(usage example with no satellites)*
 
  - "Hey Snips/Alice"
  - "Send a broadcast"
@@ -66,7 +64,7 @@ In the 'skill' tab on the web interface, click "skill settings" on the broadcast
  - Alice.... "When do you want to play that back then ?"
  - You  .... "In 3 hours"
     
-<span style="color: yellow">*(Reply to a previous message)*</span>
+*(Reply to a previous message)*
 
  - Hey Snips/Alice"
  - "Reply to the last messsage"  -  (reply to last broadcast, reply to previous broadcast, etc.) 
@@ -77,6 +75,6 @@ The message will then get sent to the last known device that initiated a broadca
 (NOTE: This feature works regardless of the state of "AllowReplies" being enabled or not) 
     
       
-### <span style="color: green">**Special NOTE**</span>
+###Special NOTE
 
 Enabling UseVoiceRecording option in settings will also automatically enable the voice recording on wakeword feature built into Alice (found in the admin Web UI).
