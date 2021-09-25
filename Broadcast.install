@@ -1,23 +1,23 @@
 {
-    "name": "Broadcast",
-    "speakableName": "broadcast skill",
-    "version": "1.0.23",
-    "icon": "far fa-comments",
-    "category": "entertainment",
-    "author": "Lazza",
-    "maintainers": [
-        "Psycho",
-        "philipp2310"
-    ],
-    "desc": "Broadcast voice messages to your satellites",
-    "aliceMinVersion": "1.0.0-b5",
-    "systemRequirements": [],
-    "pipRequirements": [],
-    "conditions": {
-        "lang": [
-            "en",
-            "de"
-        ],
-        "asrArbitraryCapture": true
-    }
+  "aliceMinVersion": "1.0.0-b5",
+  "author": "Lazza",
+  "category": "entertainment",
+  "conditions": {
+    "asrArbitraryCapture": true,
+    "lang": [
+      "en",
+      "de"
+    ]
+  },
+  "desc": "Broadcast voice messages to your satellites!",
+  "icon": "far fa-comments",
+  "maintainers": [
+    "Psycho",
+    "philipp2310"
+  ],
+  "name": "Broadcast",
+  "pipRequirements": [],
+  "speakableName": "broadcast skill",
+  "systemRequirements": [],
+  "version": "1.0.24"
 }
